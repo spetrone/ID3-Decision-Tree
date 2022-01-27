@@ -1,0 +1,15 @@
+Math,Statistics,Science,English,(A+) grade in programming?
+A,B,A-,A,No
+A,B,A-,A+,No
+A+,B,A-,A,Yes
+B,B+,A-,A,Yes
+B,A,A,A,Yes
+B,A,A,A+,No
+A+,A,A,A+,Yes
+A,B+,A-,A,No
+A,A,A,A,Yes
+B,B+,A,A,Yes
+A,B+,A,A+,Yes
+A+,B+,A-,A+,Yes
+A+,B,A,A,Yes
+B,B+,A-,A+,No
