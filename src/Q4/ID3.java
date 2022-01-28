@@ -419,21 +419,18 @@ public class ID3 {
 				levelCount++;
 				System.out.println("Level: " + levelCount);
 				for (DTNode node : level) {
-					System.out.print("Path: ");
-					for(String pathItem : node.getPath()) {
-						System.out.print(pathItem+ ", ");
-					}
-					System.out.print("|node" + node.getValue() + "  ");
+					System.out.print("  " + node.getValue() + "  ");
 				}
 				System.out.println("");
+				System.out.print("  ");
 				for (DTNode node : level) {
 					for(String attrVal : node.children.keySet()) {
-						System.out.print(attrVal + " ");
-						
+						System.out.print(attrVal + "   ");						
 					}
+					System.out.print("   ");
 				}
 				//space to next level
-				System.out.println("\n\n");
+				System.out.println("\n");
 				
 			}
 		}

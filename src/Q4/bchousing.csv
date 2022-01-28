@@ -1,0 +1,15 @@
+Price,Number of Bedrooms,Size (sqft),Distance to Bus-Stop,House sold in 10 days?
+300k,1,3500,far,No
+300k,1,3500,near,No
+250k,1,3500,far,Yes
+350k,2,3500,far,Yes
+350k,3,5000,far,Yes
+350k,3,5000,near,No
+250k,3,5000,near,Yes
+300k,2,3500,far,No
+300k,3,5000,far,Yes
+350k,2,5000,far,Yes
+300k,2,5000,near,Yes
+250k,2,3500,near,Yes
+250k,1,5000,far,Yes
+350k,2,3500,near,No

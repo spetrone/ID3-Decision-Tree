@@ -21,7 +21,7 @@ public class DecisionTree {
 		}
 		
 		//get the csv file and class attribute
-		String classAttr = "(A+) grade in programming?";   //UPDATE TO args[1] after *************************************************************************
+		String classAttr = "House sold in 10 days?";   //UPDATE TO args[1] after *************************************************************************
 		String filePath = args[0].trim();
 		
 		//parse into dataset
@@ -42,19 +42,19 @@ public class DecisionTree {
 		   System.out.println("entropy: " + ent);
 		   
 		   //test split
-		   ID3Search.splitDataset("Statistics", training_dataset);
+		   //ID3Search.splitDataset("Statistics", training_dataset);
 		   
 		   //test infoGain
-		   double gain = ID3Search.calculateInformationGain("Math", training_dataset);
-		   System.out.println("\n\nInfo gain for Sciences: " + gain);
+		  // double gain = ID3Search.calculateInformationGain("Math", training_dataset);
+		  // System.out.println("\n\nInfo gain for Sciences: " + gain);
 			
 		   //test find best split
 		   //make empty array list (empty path, therefore at root)
-		   ArrayList<String> testPath = new ArrayList<String>();
-		   String bestSplit =  ID3Search.chooseBestSplit(training_dataset, testPath);
+		  // ArrayList<String> testPath = new ArrayList<String>();
+		  // String bestSplit =  ID3Search.chooseBestSplit(training_dataset, testPath);
 		  
-		   System.out.print("Its information gain is: " + ID3Search.calculateInformationGain( bestSplit, training_dataset));
-		   System.out.print("The best split is: " + bestSplit);
+		  // System.out.print("Its information gain is: " + ID3Search.calculateInformationGain( bestSplit, training_dataset));
+		   //System.out.print("The best split is: " + bestSplit);
 		   
 		   //test tree
 		   //create empty path
@@ -100,7 +100,7 @@ public class DecisionTree {
 			 String tempLine = scan.nextLine();
 			 
 			 //create a row from each new csv line
-			 ArrayList<String> newRow= new ArrayList<>(Arrays.asList(tempLine.split(",")));
+			 ArrayList<String> newRow= new ArrayList<String>(Arrays.asList(tempLine.split(",")));
 			 
 			 //add new row to dataset
 			 training_dataset.add(newRow);			 
