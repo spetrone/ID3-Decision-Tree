@@ -2,6 +2,9 @@ package Q4;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 public class ID3 {
 	
@@ -376,9 +379,13 @@ public class ID3 {
 										
 				//create a node with the best split attribute
 				DTNode thisNode = new DTNode("internal", bestAttribute, path);	
-				//add this attribute to the child nodes' paths
-				ArrayList<String> childPath = path; 
-				path.add(bestAttribute);
+				//add this attribute to the child nodes' paths; //explicitly copy to not access object reference
+				ArrayList<String> childPath = new ArrayList<String>();
+				for (String pathElement : path) {
+					childPath.add(pathElement);
+				}
+				childPath.add(bestAttribute); //add to the path
+				
 				
 				//recursively call this algorithm and assign the returned nodes as the children of this node
 				//get the split datasets, then iterate through the list of datasets based on their split value
@@ -396,23 +403,74 @@ public class ID3 {
 		}
 		
 		
-		public void printAll(DTNode root) {
+		public void printTree(DTNode root) {
 			System.out.println("\n\n\nDECISION TREE");
 			System.out.println("Class: " + classAttr + "\n\n\n");
 			
-			printTree(root);
+			
+			
+			//build the tree in queues
+			ArrayList<ArrayList<DTNode>> levelList = new ArrayList<ArrayList<DTNode>>();
+			buildTreeContainer(root, levelList);
+			
+			//print the tree from queues
+			int levelCount = 0;
+			for (ArrayList<DTNode> level : levelList) {
+				levelCount++;
+				System.out.println("Level: " + levelCount);
+				for (DTNode node : level) {
+					System.out.print("Path: ");
+					for(String pathItem : node.getPath()) {
+						System.out.print(pathItem+ ", ");
+					}
+					System.out.print("|node" + node.getValue() + "  ");
+				}
+				System.out.println("");
+				for (DTNode node : level) {
+					for(String attrVal : node.children.keySet()) {
+						System.out.print(attrVal + " ");
+						
+					}
+				}
+				//space to next level
+				System.out.println("\n\n");
+				
+			}
 		}
 		
-		public void printTree(DTNode root) {
-			System.out.println(root.getType() + " - " + root.getValue());
-			System.out.println("\n");
+		public void buildTreeContainer(DTNode node, ArrayList<ArrayList<DTNode>> levelList) {		
+	
+			ArrayList<DTNode> thisLevel;
 			
-			for (String attrVal : root.children.keySet()) {
-				System.out.print("    " + attrVal + "    ");	
+			//check if level exists for this node (or side case of root level)
+			if(node.getPath().size() > levelList.size()-1) {
+				System.out.print("Path size:" + node.getPath().size());
+				System.out.println("    levelList size: " + levelList.size());
+				thisLevel = new ArrayList<DTNode>();
+				levelList.add(thisLevel);
 			}
-			for (String attrVal : root.children.keySet()) {
-				printTree(root.children.get(attrVal));
+			else { //if it already exists, set it
+				thisLevel = levelList.get(node.getPath().size());
+				System.out.print("||Path size:" + node.getPath().size());
+				System.out.println("    levelList size: " + levelList.size());
 			}
-		}
+			
+			
+			//add this node to the appropriate level 
+			thisLevel.add(node);
+			
+			//base case is if it is a leaf
+			if (node.type.equals("leaf")) {
+				return;
+			}
+			else {
+				//call recursively for children
+				for(DTNode child : node.children.values()) {
+					buildTreeContainer(child, levelList);
+				}
+			}		
+	    }
+		
 	}
+	
 

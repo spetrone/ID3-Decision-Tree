@@ -60,7 +60,7 @@ public class DecisionTree {
 		   //create empty path
 		   ArrayList<String> emptyPath = new ArrayList<String>();
 			DTNode root = ID3Search.buildDecisionTree(emptyPath, training_dataset);
-			ID3Search.printAll(root);
+			ID3Search.printTree(root);
 			
 		   
 	  }

@@ -46,6 +46,7 @@ public class DTNode {
 		return this.type;
 	}
 	
+	
 
 	/*
 	 * This function adds a child node to the child node container
