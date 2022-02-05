@@ -11,18 +11,25 @@ import java.util.Scanner;
 
 public class DecisionTree {
 	
-	//
+	
 	public static void main(String[] args) throws NoMatchingClassException {
 		
-		if (args.length != 2) {
-			System.out.println("arg1: " + args[0]);
-			System.out.println("arg2: " + args[1]);
-			System.out.println("there should be one argument, the file path, and the second, the class attribute");
-		}
+		//if (args.length != 2) {
+		//	System.out.println("arg1: " + args[0]);
+		//	System.out.println("arg2: " + args[1]);
+		//	System.out.println("there should be one argument, the file path, and the second, the class attribute");
+		//}
 		
 		//get the csv file and class attribute
-		String classAttr = "House sold in 10 days?";   //UPDATE TO args[1] after *************************************************************************
-		String filePath = args[0].trim();
+		//String classAttr = "(A+) grade in programming?";    //UPDATE TO args[1] after *************************************************************************
+		String classAttr = "House sold in 10 days?";
+				//String filePath = "./src/bchousing.csv";
+		
+		String localDir = System.getProperty("user.dir");
+		System.out.println(localDir);
+		String filePath = localDir + "\\src\\bchousing.csv";
+		System.out.println(filePath);
+		
 		
 		//parse into dataset
 		ArrayList<ArrayList<String>> training_dataset = parseCSV(filePath);
@@ -60,7 +67,7 @@ public class DecisionTree {
 		   //create empty path
 		   ArrayList<String> emptyPath = new ArrayList<String>();
 			DTNode root = ID3Search.buildDecisionTree(emptyPath, training_dataset);
-			ID3Search.printTree(root);
+			ID3Search.printHorizontal(root, "");
 			
 		   
 	  }

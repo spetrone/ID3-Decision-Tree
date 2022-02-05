@@ -16,6 +16,7 @@ public class DTNode {
 	
 	String type; //L = leaf, I = internal
 	String value; //split attribute or class depending on type
+	DTNode parent;
 	ArrayList<String> pathMap = new ArrayList<String>(); //contains attributes used along path for decisions (prevent repeats)
 	ArrayList<ArrayList<String>> dataset; //the dataset associated with the split for this node; for root of tree, this is the full training dataset
 	HashMap<String, DTNode> children = new HashMap<String, DTNode>(); //container for children key = split attribute value, value = child node
@@ -44,6 +45,14 @@ public class DTNode {
 	
 	public String getType() {
 		return this.type;
+	}
+	
+	public void setParent(DTNode parentNode) {
+		this.parent = parentNode;
+	}
+	
+	public DTNode getParent() {
+		return this.parent;
 	}
 	
 	

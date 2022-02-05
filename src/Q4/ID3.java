@@ -1,10 +1,10 @@
 package Q4;
+/*
+ * 
+ */
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.PriorityQueue;
-import java.util.Queue;
 
 public class ID3 {
 	
@@ -290,12 +290,7 @@ public class ID3 {
 		}
 		
 			
-		//testTree (input - row)
-			
-		//printTree(root)
-			
-		
-			
+				
 		//RECURSIVE ID3 ALGO
 		//BUILD TREE
 		/*
@@ -354,6 +349,7 @@ public class ID3 {
 					String leafClass = nodeDataset.get(1).get(classIndex);
 					DTNode leafNode = new DTNode("leaf", leafClass, path);
 					newNode= leafNode;
+					
 				} else if (sameAttributes) {
 					int maxCount = 0;
 					String maxClassVal = "";
@@ -392,6 +388,8 @@ public class ID3 {
 				HashMap<String, ArrayList<ArrayList<String>>> splitSets =  splitDataset(bestAttribute, nodeDataset);
 				for (String attrVal : splitSets.keySet()) {
 					DTNode newChild = buildDecisionTree(childPath, splitSets.get(attrVal));
+					//set parent of new child for traversing the tree later
+					newChild.setParent(thisNode);
 					//note that the path is updated already for both leaf nodes and internal nodes
 					//add child to this nodes children
 					thisNode.addChildNode(attrVal, newChild);
@@ -402,7 +400,59 @@ public class ID3 {
 			return newNode;
 		}
 		
+		//pre-order traversal and print
+		public void printHorizontal (DTNode node, String indent) {
+			
+			//base case
+			if (node.getType().contentEquals("leaf")) {
+				System.out.println(node.getValue()); //new line				
+			}
+			else {//internal node, call recursively in pre-order traversal
+				String nodeString = (node.getValue());
+				//add to indent for child nodes
+				indent = addToIndent(indent, nodeString.length());
+				
+				System.out.print(nodeString);
+				
+				
+				Boolean first = true;
+				for(String childAttr : node.children.keySet()) {
+					int stringLength = 0;
+					String attrStr = "";
+					if(first) {
+						attrStr =  " ---" + childAttr + "--- ";
+						stringLength = attrStr.length();
+						first = false;
+					}
+					else {
+						String edge = " ---" + childAttr + "--- ";
+						attrStr =  indent + edge;
+						stringLength = edge.length();
+					}
+					
+					System.out.print(attrStr);
+					String newIndent = addToIndent(indent, stringLength);
+					printHorizontal(node.children.get(childAttr), newIndent);
+					
+				}
+				
+			}
+			
+			
+		}
 		
+		String addToIndent(String ind, int add) {
+			String newIndent = ind;
+			for(int i = 0; i < add; i++) {
+				newIndent += " ";
+			}
+			return newIndent;
+		}
+		
+		
+		/*
+		 * This functio prints the tree 
+		 */
 		public void printTree(DTNode root) {
 			System.out.println("\n\n\nDECISION TREE");
 			System.out.println("Class: " + classAttr + "\n\n\n");
@@ -415,19 +465,36 @@ public class ID3 {
 			
 			//print the tree from queues
 			int levelCount = 0;
+			
+			
 			for (ArrayList<DTNode> level : levelList) {
 				levelCount++;
-				System.out.println("Level: " + levelCount);
-				for (DTNode node : level) {
-					System.out.print("  " + node.getValue() + "  ");
+				int indentNum = 15/(levelCount+1);
+				String indent = "";
+				
+				for (int i = 0; i < indentNum; i++) {
+					indent += " ";
+				}
+				
+				
+				System.out.println("");
+				for (DTNode node : level) {					
+					System.out.print( node.getValue() + indent);										
 				}
 				System.out.println("");
-				System.out.print("  ");
+				
+				//print child attributes/decision branches
 				for (DTNode node : level) {
 					for(String attrVal : node.children.keySet()) {
-						System.out.print(attrVal + "   ");						
-					}
-					System.out.print("   ");
+						System.out.print(attrVal + indent);						
+					}					
+				}
+				//print edges
+				System.out.println("");
+				for (DTNode node : level) {
+					for(String attrVal : node.children.keySet()) {
+						System.out.print("|" + indent);						
+					}					
 				}
 				//space to next level
 				System.out.println("\n");
