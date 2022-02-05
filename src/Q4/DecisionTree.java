@@ -7,7 +7,9 @@ import java.util.Scanner;
 
 
 /*
- * This class handles instantiating and building a decision tree.
+ * This class handles instantiating an ID3 object and calling the ID3 methods
+ * for building, printing and testing a decision tree with a given dataset.
+ * 
  * It also handles taking a csv as an input file, opening it and parsing
  * it to provide a dataset to the ID3 algorithm to use as its 
  * training dataset to build a decision tree.
@@ -24,14 +26,15 @@ public class DecisionTree {
 		//String classAttr = "House sold in 10 days?";			
 		
 		//set file path for input file
-		String localDir = System.getProperty("user.dir");	
-		String filePath = localDir + "\\src\\test.csv";
+		//String localDir = System.getProperty("user.dir");	
+		//String filePath =  ".\\src\\bchousing.csv";
+		String filePath =  ".\\src\\test.csv";
 		
 		//parse file to a dataset in memory
 		ArrayList<ArrayList<String>> training_dataset = parseCSV(filePath);
 		
 	   //try creating an instance of ID3; If there is no matching class from
-		//the class, produce an exception (more for command-line inputs)
+		//the dataset, produce an exception (more important for command-line inputs)
 	  try {
 		
 		  //create an instance of the ID3 algorithm for the given datset, then built it and print it
@@ -40,6 +43,7 @@ public class DecisionTree {
 		  //initialize the path for the root node to empty (this will track which attributes have been used for splits)
 		  ArrayList<String> emptyPath = new ArrayList<String>();		   
 		   
+		  //build and print decision tree
 		  DTNode root = ID3Search.buildDecisionTree(emptyPath, training_dataset);
 		  System.out.println("DECISION TREE: \n");
 		  ID3Search.printHorizontal(root, "");	

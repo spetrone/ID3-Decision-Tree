@@ -29,28 +29,34 @@ public class DTNode {
 		this.pathMap = path;		
 	}
 	
+	//empty constructor
 	public DTNode() {
 		this.type = "";
 		this.value = "";
 		
 	}
 	
+	//getter function for path
 	public ArrayList<String> getPath() {
 		return this.pathMap;
 	}
 	
+	//getter function for node value
 	public String getValue() {
 		return this.value;
 	}
 	
+	//getter function for node type
 	public String getType() {
 		return this.type;
 	}
 	
+	//setter function for parent node
 	public void setParent(DTNode parentNode) {
 		this.parent = parentNode;
 	}
 	
+	//getter function for parent node
 	public DTNode getParent() {
 		return this.parent;
 	}

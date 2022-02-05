@@ -33,6 +33,7 @@ public class ID3 {
 		 */
 		public ID3(ArrayList<ArrayList<String>> dataset, String classAttribute) 
 		throws NoMatchingClassException {
+			
 			this.classAttr = classAttribute;
 			this.training_ds = dataset;
 			
@@ -40,9 +41,9 @@ public class ID3 {
 			//and testing for a match; It is assumed that column names are unique
 			ArrayList<String> header = this.training_ds.get(0);
 			Boolean match = false; //flag to see if there is a match from command line
+			
 			int i = 0 ; //index counter
-			while( !match && i < header.size()) {		
-				
+			while( !match && i < header.size()) {						
 				if(header.get(i).contentEquals(this.classAttr)) {
 					match = true;
 					this.classIndex = i;	//set the matching index					
@@ -69,8 +70,8 @@ public class ID3 {
 			
 			//if class value not in classValCount, add it so it can be included and counted
 			for (ArrayList<String> row : ds) {
-				//get the class value from the row. skip first row.
-				if(!(row == ds.get(0))) {
+				
+				if(!(row == ds.get(0))) { //skip first row
 					String classKey = row.get(this.classIndex);
 					if(!classValCount.containsKey(row.get(this.classIndex))) {
 						classValCount.put(classKey, 0);
@@ -98,20 +99,18 @@ public class ID3 {
 			HashMap<String, Integer> classValCount = getClassValCounts(ds); //container for key-class value - value-count pairs
 			int total = ds.size() - 1; //used to calculate proportions			
 						
+			
 			//entropy -summation(P(i|t)log.2P(i|t)) 
 			double entropy = 0;
 			for (String classKey : classValCount.keySet()) {
-				int count = classValCount.get(classKey);
 				
-				double part = ((double)count/(double)total);
+				int count = classValCount.get(classKey);				
+				double part = ((double)count/(double)total);				
 				
-				
-				if (!(part == 0 || part == 1)) {//if partition value is 0, do nothing, value will be 0
-					
+				if (!(part == 0 || part == 1)) {//if partition value is 0, do nothing, value will be 0					
 					entropy = entropy - (part * logk(part, classValCount.size()));
 				}			
-			}
-						
+			}						
 			return entropy;
 		}			
 		
@@ -126,17 +125,13 @@ public class ID3 {
 		 * @param dataset - the dataset being split into multiple sub-datasets
 		 * @return a collection (hashmap) of datasets (key = attribute value, value = split dataset subset)
 		 */
-		public HashMap<String, ArrayList<ArrayList<String>>> splitDataset(String attribute, ArrayList<ArrayList<String>> dataset) {
-		 
-		
-			
+		public HashMap<String, ArrayList<ArrayList<String>>> splitDataset(String attribute, ArrayList<ArrayList<String>> dataset) {		 
+				
 			//create the collection to be returned, hashmap of split values and the subset datasets (the splits)
-			HashMap<String, ArrayList<ArrayList<String>>> splitDatasets = new HashMap<String, ArrayList<ArrayList<String>>>();
-		
+			HashMap<String, ArrayList<ArrayList<String>>> splitDatasets = new HashMap<String, ArrayList<ArrayList<String>>>();		
 			
 			//first get the attribute index to index into the ArrayLists when searching for matches in each row
-			int attrIndex = getAttributeIndex(attribute);
-			
+			int attrIndex = getAttributeIndex(attribute);			
 			
 			//get the header to add to each split; this is a bit redundant and the header could be a data member of the class
 			ArrayList<String> header = dataset.get(0);
@@ -161,9 +156,7 @@ public class ID3 {
 						splitDatasets.put(classKey, newDataset); //add to collection
 					}
 				}
-			}			 
-			
-	
+			}			 				
 			return splitDatasets;
 		}				
 		
@@ -176,10 +169,8 @@ public class ID3 {
 		 * @see calculateEntropy(dataset)
 		 * @return infoGain the calculated information gain based on entropy
 		 */
-		public double calculateInformationGain(String attribute, ArrayList<ArrayList<String>> dataset) {
-			
-			
-			
+		public double calculateInformationGain(String attribute, ArrayList<ArrayList<String>> dataset) {	
+						
 			//get total size for proportions in calculations of gain
 			int parentCount = dataset.size()-1; //-1 to not count header 
 			double infoGain = 0; //the accumulator for the information gain,
@@ -200,8 +191,7 @@ public class ID3 {
 				splitCount = splitDS.size() -1; //-1 don't include header
 				proportion = (double)splitCount/parentCount;
 				infoGain -= proportion * (calculateEntropy(splitDS));
-			}
-			
+			}			
 			return infoGain;
 		}
 			
@@ -472,6 +462,7 @@ public class ID3 {
 		}		
 		
 		
+		//overloaded function getAttributeIndex() where an ArrayList<string> is also a parameter
 		public int getAttributeIndex(String attribute, ArrayList<String> row) {
 			int index = 0 ; //index counter
 			Boolean match = false;
