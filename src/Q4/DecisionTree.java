@@ -6,79 +6,52 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 
-
+/*
+ * This class handles instantiating and building a decision tree.
+ * It also handles taking a csv as an input file, opening it and parsing
+ * it to provide a dataset to the ID3 algorithm to use as its 
+ * training dataset to build a decision tree.
+ */
 
 
 public class DecisionTree {
 	
 	
 	public static void main(String[] args) throws NoMatchingClassException {
+	
+		//determine the class attribute
+		String classAttr = "(A+) grade in programming?";   
+		//String classAttr = "House sold in 10 days?";			
 		
-		//if (args.length != 2) {
-		//	System.out.println("arg1: " + args[0]);
-		//	System.out.println("arg2: " + args[1]);
-		//	System.out.println("there should be one argument, the file path, and the second, the class attribute");
-		//}
+		//set file path for input file
+		String localDir = System.getProperty("user.dir");	
+		String filePath = localDir + "\\src\\test.csv";
 		
-		//get the csv file and class attribute
-		//String classAttr = "(A+) grade in programming?";    //UPDATE TO args[1] after *************************************************************************
-		String classAttr = "House sold in 10 days?";
-				//String filePath = "./src/bchousing.csv";
-		
-		String localDir = System.getProperty("user.dir");
-		System.out.println(localDir);
-		String filePath = localDir + "\\src\\bchousing.csv";
-		System.out.println(filePath);
-		
-		
-		//parse into dataset
+		//parse file to a dataset in memory
 		ArrayList<ArrayList<String>> training_dataset = parseCSV(filePath);
 		
 	   //try creating an instance of ID3; If there is no matching class from
-		//the command line argument and the dataset, an exception is thrown
+		//the class, produce an exception (more for command-line inputs)
 	  try {
 		
+		  //create an instance of the ID3 algorithm for the given datset, then built it and print it
 		  ID3 ID3Search = new ID3(training_dataset, classAttr);
-		  System.out.println("Class Attribute: " +ID3Search.getClassAttr());
-		  System.out.println("Class index: " + ID3Search.getClassIndex());
-		  
-		  
-			
-		   //test entropy calculation
-		   double ent = ID3Search.calculateEntropy(training_dataset);
-		   System.out.println("entropy: " + ent);
+		 
+		  //initialize the path for the root node to empty (this will track which attributes have been used for splits)
+		  ArrayList<String> emptyPath = new ArrayList<String>();		   
 		   
-		   //test split
-		   //ID3Search.splitDataset("Statistics", training_dataset);
-		   
-		   //test infoGain
-		  // double gain = ID3Search.calculateInformationGain("Math", training_dataset);
-		  // System.out.println("\n\nInfo gain for Sciences: " + gain);
-			
-		   //test find best split
-		   //make empty array list (empty path, therefore at root)
-		  // ArrayList<String> testPath = new ArrayList<String>();
-		  // String bestSplit =  ID3Search.chooseBestSplit(training_dataset, testPath);
+		  DTNode root = ID3Search.buildDecisionTree(emptyPath, training_dataset);
+		  System.out.println("DECISION TREE: \n");
+		  ID3Search.printHorizontal(root, "");	
 		  
-		  // System.out.print("Its information gain is: " + ID3Search.calculateInformationGain( bestSplit, training_dataset));
-		   //System.out.print("The best split is: " + bestSplit);
-		   
-		   //test tree
-		   //create empty path
-		   ArrayList<String> emptyPath = new ArrayList<String>();
-			DTNode root = ID3Search.buildDecisionTree(emptyPath, training_dataset);
-			ID3Search.printHorizontal(root, "");
-			
+		  //test solution for this dataset
+		  ID3Search.testSolution(training_dataset);
 		   
 	  }
 	  catch(NoMatchingClassException e) {
 		  System.err.print(e);
-	  }
-		
+	  }	
 	
-		
-	
-		
 	}
 	
 	
@@ -116,23 +89,21 @@ public class DecisionTree {
 			
 			scan.close();  //closes the scanner  
 			
-			//For testing csv parser
-			System.out.println("\n\nIn DecisionTree, parseCSV() ***\n");
+			//For testing csv parser, print the dataset
+			System.out.println("DATASET: ");
 			for (ArrayList<String> row : training_dataset) {
 				 for (String field : row) {
-					 System.out.print("" + field + " ");
+					 System.out.print(String.format("%12s", field));
 				 }
 				//print next row
 				 System.out.println(""); 
 			 }
+			System.out.println("\n\n");
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		}  
-			
-		
-		return training_dataset;
-		
+		}  				
+		return training_dataset;		
 	}
 	
 }

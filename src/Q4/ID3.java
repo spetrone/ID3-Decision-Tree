@@ -1,72 +1,28 @@
 package Q4;
-/*
- * 
- */
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/*
+ * This class handles the creation of a decision tree using the 
+ * ID3 algorithm. It is based off of/instantiated from a given
+ * training dataset.
+ * 
+ * This ID3 algorithm uses entropy, information gain and splitting methods
+ * to build a decision tree. The decision tree can then be tested for a solution
+ * (where all entries/rows in the dataset are classified correctly by the 
+ * decision tree). A test dataset could also be used with the testSolution function,
+ * if one is available.
+ */
 public class ID3 {
 	
 	//class attribute
 		String classAttr;
 		int classIndex;
-		ArrayList<ArrayList<String>> training_ds; //the full trianing dataset 		
+		ArrayList<ArrayList<String>> training_ds; //the full trianing dataset 	
+		DTNode root; //holds root of decision tree
 		
-		
-		/* this function returns the class attribute stored in the classAttr 
-		 * 
-		 * return returns classAttribute - a string of the class attribute
-		 */
-		public String getClassAttr() {
-			return this.classAttr;
-		}
-		
-		
-		/* this function returns the class attribute index stored in the classIndex
-		 * 
-		 * @return classIndex - an integer of the class attribute index
-		 */
-		public Integer getClassIndex() {
-			return this.classIndex;
-		}		
-		
-		
-		/*
-		 * Helper function to get the index of an attribute from the dataset header
-		 * 
-		 * @param attribute  - the string attribute for which the index is being found in original dataset header
-		 */
-		public int getAttributeIndex(String attribute) {
-			int index = 0 ; //index counter
-			Boolean match = false;
-			ArrayList<String> header = this.training_ds.get(0);
-			while( !match && index < header.size()) {		
-				System.out.println("Attribute: " + attribute + "  headerval: " + header.get(index));
-				if(header.get(index).equals(attribute)) {
-					match = true;		
-					System.out.println("MATCH at index: " + index);
-				}
-				else index++; //increment header field			
-			}
-			return index;
-		}		
-		
-		
-		/*
-		 * helper function to calculate log to base k 
-		 * 
-		 * @param N is the argument
-		 * @param k is the base
-		 * @return result is the solution
-		 */
-		public static double logk(double N, int k)
-	    {
-			// calculate using math.Log method
-	        double result = (double)(Math.log(N) / Math.log(k));  
-	        return result;
-	    }		
-		
+	
 		/*
 		 * Constructor using the class Attribute and dataset for 
 		 * building the decision tree
@@ -109,8 +65,7 @@ public class ID3 {
 			//find the counts of each class value and the total count of rows in dataset
 			//hashmap that stores the class value (string) and count for that value in dataset
 			HashMap<String, Integer> classValCount = new HashMap<String, Integer>();
-			int total = ds.size() - 1; //-1 to not include header
-			System.out.println("Total: " + total);
+			int total = ds.size() - 1; //-1 to not include header			
 			
 			//if class value not in classValCount, add it so it can be included and counted
 			for (ArrayList<String> row : ds) {
@@ -141,25 +96,22 @@ public class ID3 {
 		public double calculateEntropy(ArrayList<ArrayList<String>> ds){
 			
 			HashMap<String, Integer> classValCount = getClassValCounts(ds); //container for key-class value - value-count pairs
-			int total = ds.size() - 1; //used to calculate proportions
-			
-			System.out.println("There are " + classValCount.size() + " different classes");
-			
+			int total = ds.size() - 1; //used to calculate proportions			
+						
 			//entropy -summation(P(i|t)log.2P(i|t)) 
 			double entropy = 0;
 			for (String classKey : classValCount.keySet()) {
 				int count = classValCount.get(classKey);
-				System.out.println("count: " + count);
+				
 				double part = ((double)count/(double)total);
-				System.out.println("Partition for " + classKey + ": " + part);
+				
 				
 				if (!(part == 0 || part == 1)) {//if partition value is 0, do nothing, value will be 0
-					System.out.println("sub-entropy for this: " + (part * logk(part, classValCount.size())));
+					
 					entropy = entropy - (part * logk(part, classValCount.size()));
 				}			
 			}
-			
-			System.out.println("Entropy: " + entropy + "\n\n");
+						
 			return entropy;
 		}			
 		
@@ -176,15 +128,15 @@ public class ID3 {
 		 */
 		public HashMap<String, ArrayList<ArrayList<String>>> splitDataset(String attribute, ArrayList<ArrayList<String>> dataset) {
 		 
-			System.out.println("\n\n **** In splitDataset() ***\n");
+		
 			
 			//create the collection to be returned, hashmap of split values and the subset datasets (the splits)
 			HashMap<String, ArrayList<ArrayList<String>>> splitDatasets = new HashMap<String, ArrayList<ArrayList<String>>>();
-			System.out.println("\nattribute to split: " + attribute);
+		
 			
 			//first get the attribute index to index into the ArrayLists when searching for matches in each row
 			int attrIndex = getAttributeIndex(attribute);
-			System.out.println("attribute index: " + attrIndex);
+			
 			
 			//get the header to add to each split; this is a bit redundant and the header could be a data member of the class
 			ArrayList<String> header = dataset.get(0);
@@ -211,21 +163,7 @@ public class ID3 {
 				}
 			}			 
 			
-			//test by printing
-			
-			for ( String attrKey : splitDatasets.keySet()) {
-				
-				System.out.println("Attribute: " + attrKey);
-				ArrayList<ArrayList<String>> ds = splitDatasets.get(attrKey);
-				//For testing csv parser
-				for (ArrayList<String> row : ds) {
-					 for (String field : row) {
-						 System.out.print("" + field + " ");
-					 }
-					//print next row
-					 System.out.println(""); 
-				 }
-			}
+	
 			return splitDatasets;
 		}				
 		
@@ -240,7 +178,7 @@ public class ID3 {
 		 */
 		public double calculateInformationGain(String attribute, ArrayList<ArrayList<String>> dataset) {
 			
-			System.out.println("\n\n\nSTARTING calculation of Information Gain!\n\n");
+			
 			
 			//get total size for proportions in calculations of gain
 			int parentCount = dataset.size()-1; //-1 to not count header 
@@ -269,7 +207,12 @@ public class ID3 {
 			
 		
 		
-		//choose best split attribute (input dataset - output, split attribute)
+		/*
+		 * choose best split attribute (input dataset - output, split attribute)
+		 * @param dataset - the dataset to find the best split for
+		 * @param path - the path up until the current node, used to avoid repeating splits
+		 * @return String maxAttribute - returns the attribute for which it is the best split (highest information gain)
+		 */
 		public String chooseBestSplit(ArrayList<ArrayList<String>>dataset, ArrayList<String> path) {
 			
 			double maxGain = 0; //tracks maximum info gain for comparison
@@ -290,18 +233,17 @@ public class ID3 {
 		}
 		
 			
-				
-		//RECURSIVE ID3 ALGO
-		//BUILD TREE
+
 		/*
 		 * A recursive tree building algorithm. It makes use of the static class variables
 		 * for this instance of an ID3 algorithm (the class and its index in the dataset fields)
 		 * 
-		 * 
-		 * 
-		 * 
 		 * It creates a node for a split, and in doing so it creates the child nodes for that split.
 		 * It then recursively calls itself for each child node and then returns its root node.
+		 * 
+		 * @param path - the path of split attributes up to the current recursive call - to avoid repeating 
+		 * 					split attributes
+		 * @param nodeDataset - the current dataset/subdataset for the current recursive call
 		 */
 		public DTNode buildDecisionTree(ArrayList<String> path, ArrayList<ArrayList<String>> nodeDataset) {
 			
@@ -343,7 +285,7 @@ public class ID3 {
 			
 			//test base case (i.e. it is at/creating a leaf node)
 			if(oneClass || sameAttributes) {				
-				
+								
 				//if oneClass, set it to that class
 				if(oneClass) {
 					String leafClass = nodeDataset.get(1).get(classIndex);
@@ -397,10 +339,73 @@ public class ID3 {
 				newNode = thisNode;				
 			}
 			
+			//set node to root (the last recursive call should be the root)
+			this.root = newNode;
 			return newNode;
 		}
 		
-		//pre-order traversal and print
+		/*
+		 * This function tests if the decision tree provides a complete solution
+		 * for the given dataset
+		 * 
+		 * @param ds is the dataset used to test if there is a solution
+		 * @return boolean - true if there is a complete solution, false otherwise
+		 */
+		public Boolean testSolution(ArrayList<ArrayList<String>> ds) {
+			
+			//get root index
+			Boolean solution = false;
+			ArrayList<String> header = ds.get(0);
+			int currentIndex = getAttributeIndex(this.root.getValue(), header);
+			DTNode currentNode = root; //tracks node while traversing through tree
+			int correctCount = 0;
+			
+			
+			//test for each row			
+			for (ArrayList<String> row : ds) {
+				currentNode = root;
+				currentIndex = getAttributeIndex(currentNode.getValue(), header);
+				
+				if(!(row == ds.get(0))) { //skip first row
+					
+					while (currentNode.getType().contentEquals("internal")) {
+						
+						//follow edges given the values for each node in the row					
+						String edgeValue = row.get(currentIndex);					
+						currentNode = currentNode.children.get(edgeValue);
+												
+						if(currentNode.getType().contentEquals("internal")) {
+							currentIndex = getAttributeIndex(currentNode.getValue(), header);						
+						}
+						else { //at leaf
+							currentIndex = getAttributeIndex(currentNode.getValue(), row);		
+							
+							if(currentNode.getValue().contentEquals(row.get(currentIndex))) {
+								correctCount++;
+							}
+						}						
+					}						
+				}				
+			} //for each row in ds
+			
+			System.out.println("\n\nCorrect classifications: " + correctCount);
+			System.out.println("Number of rows: " + (ds.size()-1));			
+			if ((double)correctCount / (ds.size()-1) == 1.0) {
+				solution = true;
+				System.out.println("There is a solution where all dataset entries match the decision tree classification");
+				
+			}			
+			return solution;
+		} 
+		
+		
+		/*
+		 * This function recursively prints a completed decision tree using
+		 * a pre-order traversal. It prints the tree horizontally
+		 * 
+		 * @param node - the current node being printed in the recursive call 
+		 * @param indent - the indent for the current node being printed
+		 */
 		public void printHorizontal (DTNode node, String indent) {
 			
 			//base case
@@ -420,121 +425,80 @@ public class ID3 {
 					int stringLength = 0;
 					String attrStr = "";
 					if(first) {
-						attrStr =  " ---" + childAttr + "--- ";
+						attrStr =  " ---(" + childAttr + ")--- ";
 						stringLength = attrStr.length();
 						first = false;
 					}
 					else {
-						String edge = " ---" + childAttr + "--- ";
+						String edge = " ---(" + childAttr + ")--- ";
 						attrStr =  indent + edge;
 						stringLength = edge.length();
 					}
 					
 					System.out.print(attrStr);
 					String newIndent = addToIndent(indent, stringLength);
-					printHorizontal(node.children.get(childAttr), newIndent);
-					
-				}
-				
-			}
-			
-			
+					printHorizontal(node.children.get(childAttr), newIndent);					
+				}				
+			}						
 		}
 		
+		/*
+		 * Helper function to adjust indenting in printHorizontal
+		 */
 		String addToIndent(String ind, int add) {
 			String newIndent = ind;
 			for(int i = 0; i < add; i++) {
 				newIndent += " ";
 			}
 			return newIndent;
-		}
-		
+		}			
 		
 		/*
-		 * This functio prints the tree 
+		 * Helper function to get the index of an attribute from the dataset header
+		 * 
+		 * @param attribute  - the string attribute for which the index is being found in original dataset header
 		 */
-		public void printTree(DTNode root) {
-			System.out.println("\n\n\nDECISION TREE");
-			System.out.println("Class: " + classAttr + "\n\n\n");
-			
-			
-			
-			//build the tree in queues
-			ArrayList<ArrayList<DTNode>> levelList = new ArrayList<ArrayList<DTNode>>();
-			buildTreeContainer(root, levelList);
-			
-			//print the tree from queues
-			int levelCount = 0;
-			
-			
-			for (ArrayList<DTNode> level : levelList) {
-				levelCount++;
-				int indentNum = 15/(levelCount+1);
-				String indent = "";
-				
-				for (int i = 0; i < indentNum; i++) {
-					indent += " ";
+		public int getAttributeIndex(String attribute) {
+			int index = 0 ; //index counter
+			Boolean match = false;
+			ArrayList<String> header = this.training_ds.get(0);
+			while( !match && index < header.size()) {		
+				if(header.get(index).equals(attribute)) {
+					match = true;					
 				}
-				
-				
-				System.out.println("");
-				for (DTNode node : level) {					
-					System.out.print( node.getValue() + indent);										
-				}
-				System.out.println("");
-				
-				//print child attributes/decision branches
-				for (DTNode node : level) {
-					for(String attrVal : node.children.keySet()) {
-						System.out.print(attrVal + indent);						
-					}					
-				}
-				//print edges
-				System.out.println("");
-				for (DTNode node : level) {
-					for(String attrVal : node.children.keySet()) {
-						System.out.print("|" + indent);						
-					}					
-				}
-				//space to next level
-				System.out.println("\n");
-				
+				else index++; //increment header field			
 			}
-		}
+			return index;
+		}		
 		
-		public void buildTreeContainer(DTNode node, ArrayList<ArrayList<DTNode>> levelList) {		
-	
-			ArrayList<DTNode> thisLevel;
-			
-			//check if level exists for this node (or side case of root level)
-			if(node.getPath().size() > levelList.size()-1) {
-				System.out.print("Path size:" + node.getPath().size());
-				System.out.println("    levelList size: " + levelList.size());
-				thisLevel = new ArrayList<DTNode>();
-				levelList.add(thisLevel);
-			}
-			else { //if it already exists, set it
-				thisLevel = levelList.get(node.getPath().size());
-				System.out.print("||Path size:" + node.getPath().size());
-				System.out.println("    levelList size: " + levelList.size());
-			}
-			
-			
-			//add this node to the appropriate level 
-			thisLevel.add(node);
-			
-			//base case is if it is a leaf
-			if (node.type.equals("leaf")) {
-				return;
-			}
-			else {
-				//call recursively for children
-				for(DTNode child : node.children.values()) {
-					buildTreeContainer(child, levelList);
-				}
-			}		
-	    }
 		
-	}
+		public int getAttributeIndex(String attribute, ArrayList<String> row) {
+			int index = 0 ; //index counter
+			Boolean match = false;
+			
+			while( !match && index < row.size()) {		
+				if(row.get(index).equals(attribute)) {
+					match = true;					
+				}
+				else index++; //increment header field			
+			}
+			return index;
+		}		
+		
+		/*
+		 * helper function to calculate log to base k 
+		 * 
+		 * @param N is the argument
+		 * @param k is the base
+		 * @return result is the solution
+		 */
+		public static double logk(double N, int k)
+	    {
+			// calculate using math.Log method
+	        double result = (double)(Math.log(N) / Math.log(k));  
+	        return result;
+	    }		
+		
+} //ID3.java
 	
 
